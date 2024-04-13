@@ -3,6 +3,9 @@ import auth from "@react-native-firebase/auth";
 import { NavigationContainer } from "@react-navigation/native";
 import InNav from "./navigators/InNav";
 import OutNav from "./navigators/OutNav";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 export default function App() {
   const [isLoggenIn, setIsLoggedIn] = useState(false);
@@ -17,9 +20,11 @@ export default function App() {
     });
   }, []);
   return (
-    <NavigationContainer>
-      {/* isLoggenIn 상태에 따라 다른 Nav를 실행 */}
-      {isLoggenIn ? <InNav /> : <OutNav />}
-    </NavigationContainer>
+    <QueryClientProvider client={queryClient}>
+      <NavigationContainer>
+        {/* isLoggenIn 상태에 따라 다른 Nav를 실행 */}
+        {isLoggenIn ? <InNav /> : <OutNav />}
+      </NavigationContainer>
+    </QueryClientProvider>
   );
 }
