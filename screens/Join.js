@@ -1,6 +1,8 @@
 import React, { useRef, useState } from "react";
 import styled from "styled-components/native";
+import auth from "@react-native-firebase/auth";
 import { BLACK_COLOR } from "../colors";
+import { ActivityIndicator, Alert } from "react-native";
 
 const Container = styled.View`
   background-color: ${BLACK_COLOR};
@@ -36,8 +38,31 @@ const Join = () => {
   const passwordInput = useRef();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const onSubmitEditing = () => {
+  const [loading, setLoading] = useState(false);
+  const onSubmitEmailEditing = () => {
     passwordInput.current.focus();
+  };
+  const onSubmitPasswordEditing = async () => {
+    if (email === "" || password === "") {
+      return Alert.alert("Fill in the form");
+    }
+    // 유저가 loading 중일때 버튼을 다시 누를 수 없도록 함
+    if (loading) return;
+    setLoading(true);
+    try {
+      const userCredential = await auth().createUserWithEmailAndPassword(
+        email,
+        password
+      );
+      console.log(userCredential);
+    } catch (e) {
+      // error code를 사용하여 유저에게 정보를 줄 수 있음
+      switch (e.code) {
+        case "auth/weak-password": {
+          Alert.alert("Write a stronger password!");
+        }
+      }
+    }
   };
   return (
     <Container>
@@ -49,7 +74,7 @@ const Join = () => {
         value={email}
         returnKeyType="next"
         onChangeText={(text) => setEmail(text)}
-        onSubmitEditing={onSubmitEditing}
+        onSubmitEditing={onSubmitEmailEditing}
         placeholderTextColor={"rgba(255, 255, 255, 0.7)"}
       />
       <TextInput
@@ -59,10 +84,15 @@ const Join = () => {
         value={password}
         returnKeyType="done"
         onChangeText={(text) => setPassword(text)}
+        onSubmitEditing={onSubmitPasswordEditing}
         placeholderTextColor={"rgba(255, 255, 255, 0.7)"}
       />
-      <Btn>
-        <BtnText>Create Account</BtnText>
+      <Btn onPress={onSubmitPasswordEditing}>
+        {loading ? (
+          <ActivityIndicator color="white" />
+        ) : (
+          <BtnText>Create Account</BtnText>
+        )}
       </Btn>
     </Container>
   );
