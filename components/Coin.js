@@ -16,7 +16,7 @@ const CoinName = styled.Text`
   font-size: 16px;
 `;
 
-const Icon = styled.Image`
+export const Icon = styled.Image`
   border-radius: 20px;
   width: 40px;
   height: 40px;
@@ -46,7 +46,7 @@ const Coin = ({ symbol, index, id }) => {
   return (
     <TouchableOpacity
       style={{ flex: 0.31 }}
-      onPress={() => navigaiton.navigate("Detail", { symbol })}
+      onPress={() => navigaiton.navigate("Detail", { symbol, id })}
     >
       {/* 애니메이션 3. Wrapper에 opacity 연결 */}
       <Wrapper style={{ opacity, transform: [{ scale }] }}>
