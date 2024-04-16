@@ -3,8 +3,8 @@ const COINS_URL = `${BASE_URL}/coins`;
 
 export const coins = () => fetch(COINS_URL).then((response) => response.json());
 
-export const info = ({ queryKey }) =>
-  fetch(`${COINS_URL}/${queryKey[1]}`).then((response) => response.json());
+export const info = (coinId) =>
+  fetch(`${COINS_URL}/${coinId}`).then((response) => response.json());
 
 export const history = ({ queryKey }) =>
   fetch(

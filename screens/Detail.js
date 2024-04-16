@@ -27,11 +27,14 @@ const Detail = ({
       ),
     });
   }, []);
+  // queryKey가 어떤 코인을 클릭해도 coinInfo로 같기 때문에 마지막에 불러온 것만 캐싱됨
   const { isLoading: infoLoading, data: infoData } = useQuery({
-    queryKey: ["coinInfo", id],
-    queryFn: info,
+    queryKey: "coinInfo",
+    queryFn: () => info(id),
   });
   console.log(infoData);
+  // 이게 더 좋음!
+  // queryKey가 ["coinHistory", id]로 이루어져 있어 클릭한 모든 코인이 캐싱됨
   const { isLoading: historyLoading, data: historyData } = useQuery({
     queryKey: ["coinHistory", id],
     queryFn: history,
