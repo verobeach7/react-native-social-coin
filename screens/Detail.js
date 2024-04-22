@@ -1,10 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components/native";
 import { Icon } from "../components/Coin";
 import { useQuery } from "@tanstack/react-query";
 import { history, info } from "../api";
+import { VictoryChart, VictoryLine, VictoryScatter } from "victory-native";
+import { BLACK_COLOR } from "../colors";
 
-const Container = styled.ScrollView``;
+const Container = styled.ScrollView`
+  background-color: ${BLACK_COLOR};
+`;
 
 const Detail = ({
   navigation,
@@ -27,19 +31,46 @@ const Detail = ({
       ),
     });
   }, []);
-  // queryKey가 어떤 코인을 클릭해도 coinInfo로 같기 때문에 마지막에 불러온 것만 캐싱됨
   const { isLoading: infoLoading, data: infoData } = useQuery({
-    queryKey: "coinInfo",
-    queryFn: () => info(id),
+    queryKey: ["coinInfo", id],
+    queryFn: info,
   });
-  console.log(infoData);
-  // 이게 더 좋음!
-  // queryKey가 ["coinHistory", id]로 이루어져 있어 클릭한 모든 코인이 캐싱됨
+  // console.log(infoData);
   const { isLoading: historyLoading, data: historyData } = useQuery({
     queryKey: ["coinHistory", id],
     queryFn: history,
   });
-  return <Container />;
+  // console.log(historyData);
+  const [victoryData, setVictoryData] = useState(null);
+  useEffect(() => {
+    if (historyData) {
+      setVictoryData(
+        historyData.map((price) => ({
+          x: new Date(price.timestamp).getTime(),
+          y: price.price,
+        }))
+      );
+    }
+  }, [historyData]);
+  console.log(victoryData);
+  return (
+    <Container>
+      {victoryData ? (
+        <VictoryChart height={360}>
+          <VictoryLine
+            animate
+            interpolation="monotoneX"
+            data={victoryData}
+            style={{ data: { stroke: "#1abc9c" } }}
+          />
+          <VictoryScatter
+            data={victoryData}
+            style={{ data: { fill: "#1abc9c" } }}
+          />
+        </VictoryChart>
+      ) : null}
+    </Container>
+  );
 };
 
 export default Detail;

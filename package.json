@@ -21,7 +21,9 @@
     "react-native": "0.73.6",
     "react-native-safe-area-context": "4.8.2",
     "react-native-screens": "~3.29.0",
-    "styled-components": "^6.1.8"
+    "react-native-svg": "^15.1.0",
+    "styled-components": "^6.1.8",
+    "victory-native": "^37.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
